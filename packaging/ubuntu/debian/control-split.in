@@ -1,0 +1,71 @@
+Source: dlt-viewer
+Section: devel
+Priority: optional
+Maintainer: @MAINTAINER@
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               ninja-build,
+               qt6-base-dev,
+               qt6-serialport-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/COVESA/dlt-viewer
+Rules-Requires-Root: no
+
+Package: dlt-viewer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqdlt@SOVER@ (= ${binary:Version}),
+         dlt-viewer-plugins (= ${binary:Version})
+Conflicts: covesa-dlt-viewer
+Replaces: covesa-dlt-viewer
+Description: COVESA DLT Viewer
+ Graphical client for DLT (Diagnostic Log and Trace, AUTOSAR) to receive,
+ decode and analyse logs and traces from ECUs running a DLT daemon.
+
+Package: dlt-commander
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqdlt@SOVER@ (= ${binary:Version})
+Recommends: dlt-viewer-plugins (= ${binary:Version})
+Conflicts: covesa-dlt-viewer
+Description: COVESA DLT Viewer command line tool
+ Command line front end to the DLT Viewer core: converts, filters and
+ exports DLT files without a GUI. Uses the decoder plugins from
+ dlt-viewer-plugins when installed.
+
+Package: dlt-viewer-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         libqdlt@SOVER@ (= ${binary:Version})
+Conflicts: covesa-dlt-viewer
+Description: COVESA DLT Viewer bundled plugins
+ Plugins shipped with DLT Viewer (D-Bus, file transfer, non-verbose,
+ test robot, viewer), installed in the system plugin directory
+ /usr/lib/<multiarch>/dlt-viewer/plugins used by dlt-viewer and
+ dlt-commander.
+
+Package: libqdlt@SOVER@
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: COVESA DLT Viewer core library
+ Shared library with the DLT parsing, connection and plugin infrastructure
+ used by dlt-viewer, dlt-commander and all viewer plugins. The soname
+ carries the viewer's major.minor version because the plugin ABI is not
+ stable across viewer versions.
+
+Package: libqdlt-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends},
+         libqdlt@SOVER@ (= ${binary:Version}),
+         qt6-base-dev,
+         qt6-serialport-dev
+Conflicts: covesa-dlt-viewer-dev
+Replaces: covesa-dlt-viewer-dev
+Description: COVESA DLT Viewer core library - development files
+ Headers, pkg-config file (qdlt.pc) and linker symlink for building
+ DLT Viewer plugins against the installed viewer. The plugin install
+ directory is available as `pkg-config --variable=plugindir qdlt`.

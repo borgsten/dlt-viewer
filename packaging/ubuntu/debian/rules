@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+
+# Optimised build with debug info (-O2 -g) and LTO. LTO makes the build
+# several times slower; build-debs.sh --no-lto sets DLT_NO_LTO=1.
+ifeq ($(DLT_NO_LTO),1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
+else
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=+lto
+endif
+include /usr/share/dpkg/architecture.mk
+
+TMP := debian/tmp
+LIBDIR := usr/lib/$(DEB_HOST_MULTIARCH)
+
+%:
+	dh $@ --buildsystem=cmake+ninja
+
+# Standard GNU layout, system Qt (no RPATH), no "SDK" tree. Versioned
+# libqdlt soname and qdlt.pc come from debian/cmake/distro.cmake.
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_PROJECT_dlt-viewer_INCLUDE=$(CURDIR)/debian/cmake/distro.cmake \
+		-DDLT_USE_STANDARD_INSTALLATION_LOCATION=ON \
+		-DDLT_INSTALL_SDK=OFF \
+		-DDLT_USE_QT_RPATH=OFF \
+		-DCMAKE_SKIP_INSTALL_RPATH=ON
+
+# The upstream install rules still drop a few things in odd places when
+# DLT_USE_STANDARD_INSTALLATION_LOCATION is on. Put them where they belong
+# (or delete them) here, so the .install files only see a sane tree and
+# dh_missing --fail-missing catches anything new.
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp
+	# commander/cmake/Linux.cmake copies the Qt libraries next to the binary
+	rm -f $(TMP)/usr/bin/lib*.so*
+	# filters land directly in the prefix; plugin example configs are dropped
+	mkdir -p $(TMP)/usr/share/dlt-viewer
+	mv $(TMP)/usr/filters $(TMP)/usr/share/dlt-viewer/filters
+	rm -r $(TMP)/usr/plugins
+	# Raw resource dump (icons are compiled into the binary via qrc); keep
+	# only the app icons, in the hicolor theme.
+	for size in 16x16 22x22 24x24 32x32 48x48 256x256; do \
+		install -Dm644 src/resources/icon/$$size/org.genivi.DLTViewer.png \
+			$(TMP)/usr/share/icons/hicolor/$$size/apps/org.genivi.DLTViewer.png; \
+	done
+	install -Dm644 src/resources/icon/symbolic/org.genivi.DLTViewer-symbolic.svg \
+		$(TMP)/usr/share/icons/hicolor/symbolic/apps/org.genivi.DLTViewer-symbolic.svg
+	rm -rf $(TMP)/usr/share/dlt-viewer/icon $(TMP)/usr/share/dlt-viewer/png $(TMP)/usr/share/dlt-viewer/svg
+	chmod 644 $(TMP)/usr/share/applications/*.desktop
+
+override_dh_missing:
+	dh_missing --fail-missing
+
+# Tests are only configured when GTest is found; it is not a build dependency.
+override_dh_auto_test:
+
+# dwz only shrinks the debug info and is slow.
+override_dh_dwz:
