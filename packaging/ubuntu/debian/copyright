@@ -1,0 +1,15 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dlt-viewer
+Source: https://github.com/COVESA/dlt-viewer
+
+Files: *
+Copyright: COVESA and DLT Viewer contributors (see AUTHORS)
+License: MPL-2.0
+
+License: MPL-2.0
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ .
+ On Debian systems, the full text of the Mozilla Public License version
+ 2.0 can be found in the file /usr/share/common-licenses/MPL-2.0.

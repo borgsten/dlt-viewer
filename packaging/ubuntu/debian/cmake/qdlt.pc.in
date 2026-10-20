@@ -1,0 +1,14 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/qdlt
+plugindir=@PLUGIN_INSTALLATION_PATH@
+qtmajor=@DLT_QT_MAJOR@
+
+Name: qdlt
+Description: DLT Viewer core library, for building DLT Viewer plugins
+URL: https://github.com/COVESA/dlt-viewer
+Version: @dlt-viewer_VERSION@
+Requires: @QT_PREFIX@Core @QT_PREFIX@Network @QT_PREFIX@SerialPort
+Libs: -L${libdir} -lqdlt
+Cflags: -I${includedir}

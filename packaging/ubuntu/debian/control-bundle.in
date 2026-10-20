@@ -1,0 +1,29 @@
+Source: dlt-viewer
+Section: devel
+Priority: optional
+Maintainer: @MAINTAINER@
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               ninja-build,
+               qt6-base-dev,
+               qt6-serialport-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/COVESA/dlt-viewer
+Rules-Requires-Root: no
+
+Package: dlt-viewer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: dlt-commander, dlt-viewer-plugins, libqdlt@SOVER@, libqdlt-dev
+Conflicts: covesa-dlt-viewer, covesa-dlt-viewer-dev,
+           dlt-commander, dlt-viewer-plugins, libqdlt@SOVER@, libqdlt-dev
+Replaces: covesa-dlt-viewer, covesa-dlt-viewer-dev,
+          dlt-commander, dlt-viewer-plugins, libqdlt@SOVER@, libqdlt-dev
+Description: COVESA DLT Viewer (viewer, commander, plugins, libqdlt SDK)
+ Graphical client for DLT (Diagnostic Log and Trace, AUTOSAR) to receive,
+ decode and analyse logs and traces from ECUs running a DLT daemon.
+ .
+ This package bundles dlt-viewer, dlt-commander, the bundled plugins in
+ /usr/lib/<multiarch>/dlt-viewer/plugins, the libqdlt shared library and
+ its headers and pkg-config file (qdlt.pc) for building plugins. Building
+ plugins additionally needs the Qt 6 development packages.
