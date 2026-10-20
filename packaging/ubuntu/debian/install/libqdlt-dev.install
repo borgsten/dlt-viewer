@@ -1,0 +1,3 @@
+usr/include/qdlt
+usr/lib/*/libqdlt.so
+usr/lib/*/pkgconfig/qdlt.pc
